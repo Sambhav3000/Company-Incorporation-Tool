@@ -1,0 +1,14 @@
+# Node modules
+backend/node_modules/
+frontend/node_modules/
+
+# TypeScript compiled output
+backend/dist/
+frontend/dist/
+
+# Environment variables
+backend/.env
+frontend/.env
+
+# Logs
+*.log
