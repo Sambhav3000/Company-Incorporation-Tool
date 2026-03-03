@@ -1,0 +1,41 @@
+.step1-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.next-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #4f46e5;
+  color: white;
+  margin-top: 10px;
+}
+
+.next-btn:hover {
+  background-color: #4338ca;
+}
+
+.error {
+  color: red;
+  font-weight: 500;
+}

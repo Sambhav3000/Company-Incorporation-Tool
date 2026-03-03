@@ -1,5 +1,6 @@
-// src/components/MultiStepForm.tsx
 import { useState, useEffect } from "react";
+import Step1Form from "../components/Step1Form";
+import Step2Form from "../components/Step2Form";
 import "../styles/MultiStepForm.css";
 
 type CompanyData = {
@@ -48,9 +49,7 @@ export default function MultiStepForm() {
             }
           }
         })
-        .catch(() => {
-          console.log("Failed to restore draft from backend");
-        });
+        .catch(() => console.log("Failed to restore draft from backend"));
     }
   }, []);
 
@@ -74,6 +73,7 @@ export default function MultiStepForm() {
   // Step 1 submit
   const handleStep1Submit = async () => {
     setError("");
+
     if (!company.name.trim()) {
       setError("Company name is required");
       return;
@@ -88,26 +88,23 @@ export default function MultiStepForm() {
     }
 
     setLoading(true);
-    try {
-      const res = await fetch(`http://localhost:5000/api/company/step1`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: company.name,
-          totalCapital: company.totalCapital,
-          numberOfShareholders: company.numberOfShareholders,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCompany({ ...company, id: data.data.id });
-        localStorage.setItem("companyId", data.data.id);
-        setStep(2);
-      } else {
-        setError(data.message || "Error creating company");
-      }
-    } catch (err) {
-      setError("Network error: could not create company");
+    const res = await fetch(`http://localhost:5000/api/company/step1`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: company.name,
+        totalCapital: company.totalCapital,
+        numberOfShareholders: company.numberOfShareholders,
+      }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      setCompany({ ...company, id: data.data.id });
+      localStorage.setItem("companyId", data.data.id);
+      setStep(2);
+    } else {
+      setError(data.message || "Error creating company");
     }
     setLoading(false);
   };
@@ -115,6 +112,7 @@ export default function MultiStepForm() {
   // Step 2 submit
   const handleStep2Submit = async () => {
     setError("");
+
     for (let i = 0; i < shareholders.length; i++) {
       const sh = shareholders[i];
       if (!sh.firstName || !sh.lastName || !sh.nationality) {
@@ -129,135 +127,47 @@ export default function MultiStepForm() {
     }
 
     setLoading(true);
-    try {
-      const res = await fetch(`http://localhost:5000/api/company/step2/${company.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shareholders }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Company and shareholders submitted successfully!");
-        localStorage.removeItem("companyId");
-        // Reset form
-        setStep(1);
-        setCompany({ name: "", totalCapital: "", numberOfShareholders: "" });
-        setShareholders([]);
-      } else {
-        setError(data.message || "Error saving shareholders");
-      }
-    } catch (err) {
-      setError("Network error: could not save shareholders");
+    const res = await fetch(`http://localhost:5000/api/company/step2/${company.id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shareholders }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Company and shareholders submitted successfully!");
+      localStorage.removeItem("companyId");
+      setStep(1);
+      setCompany({ name: "", totalCapital: "", numberOfShareholders: "" });
+      setShareholders([]);
+    } else {
+      setError(data.message || "Error saving shareholders");
     }
     setLoading(false);
   };
 
-  // Render
   return (
     <div className="container">
       <div className="step-indicator">Step {step} of 2</div>
       <h2>{step === 1 ? "Company Information" : "Shareholder Details"}</h2>
 
-      {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
-
       {step === 1 ? (
-        <>
-          <div className="form-group">
-            <label>Company Name</label>
-            <input
-              type="text"
-              value={company.name}
-              onChange={(e) =>
-                setCompany({ ...company, name: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Total Capital</label>
-            <input
-              type="number"
-              value={company.totalCapital}
-              onChange={(e) => {
-                const value = e.target.value;
-                setCompany({
-                  ...company,
-                  totalCapital: value === "" ? "" : parseInt(value),
-                });
-              }}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Number of Shareholders</label>
-            <input
-              type="number"
-              value={company.numberOfShareholders}
-              onChange={(e) => {
-                const value = e.target.value;
-                setCompany({
-                  ...company,
-                  numberOfShareholders: value === "" ? "" : parseInt(value),
-                });
-              }}
-            />
-          </div>
-
-          <button onClick={handleStep1Submit} disabled={loading}>
-            {loading ? "Saving..." : "Continue"}
-          </button>
-        </>
+        <Step1Form
+          company={company}
+          setCompany={setCompany}
+          nextStep={handleStep1Submit}
+          loading={loading}
+          error={error}
+        />
       ) : (
-        <>
-          {shareholders.map((sh, idx) => (
-            <div key={idx} className="shareholder-card">
-              <h4>Shareholder {idx + 1}</h4>
-
-              <div className="form-group">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  value={sh.firstName}
-                  onChange={(e) => {
-                    const updated = [...shareholders];
-                    updated[idx].firstName = e.target.value;
-                    setShareholders(updated);
-                  }}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  value={sh.lastName}
-                  onChange={(e) => {
-                    const updated = [...shareholders];
-                    updated[idx].lastName = e.target.value;
-                    setShareholders(updated);
-                  }}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Nationality</label>
-                <input
-                  type="text"
-                  value={sh.nationality}
-                  onChange={(e) => {
-                    const updated = [...shareholders];
-                    updated[idx].nationality = e.target.value;
-                    setShareholders(updated);
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-
-          <button onClick={handleStep2Submit} disabled={loading}>
-            {loading ? "Saving..." : "Submit Company"}
-          </button>
-        </>
+        <Step2Form
+          shareholders={shareholders}
+          setShareholders={setShareholders}
+          prevStep={() => setStep(1)}
+          onSubmit={handleStep2Submit}
+          loading={loading}
+          error={error}
+        />
       )}
     </div>
   );
