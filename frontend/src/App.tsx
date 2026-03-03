@@ -1,14 +1,17 @@
-import api from "./services/api";
-import { useEffect, useState } from "react";
+import MultiStepForm from "./pages/MultiStepForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminPage from './pages/AdminPage'
 
-const App=()=>{
-  const [message,setMessage]=useState("");
 
-  useEffect(()=>{
-    api.get("/").then(res=>setMessage(res.data));
-  },[]);
-
-  return <div>{message}</div>
-}
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MultiStepForm />}/>
+        <Route path="/add-company" element={<MultiStepForm />} />
+        <Route path="/admin" element={<AdminPage />}/>
+      </Routes>  
+    </BrowserRouter>
+)}
 
 export default App;

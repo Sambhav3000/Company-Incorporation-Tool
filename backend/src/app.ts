@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import companyRouter from './routes/company'
+import adminRouter from './routes/admin'
 
 const app=express();
 
@@ -12,4 +13,5 @@ app.get("/",(req,res)=>{
 });
 
 app.use("/api/company",companyRouter)
+app.use("/api/admin",adminRouter)
 export default app;

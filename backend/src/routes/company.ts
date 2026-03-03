@@ -76,4 +76,15 @@ router.get("/:companyId",asyncHandler(async(req,res)=>{
     return success(res,company);
 }))
 
+router.get("/",
+  asyncHandler(async (req, res) => {
+    const companies = await prisma.company.findMany({
+      include: { shareholders: true },
+      orderBy: { id: "desc" },
+    });
+
+    return success(res, companies);
+  })
+);
+
 export default router;
