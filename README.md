@@ -126,16 +126,9 @@ npm install
 
 ## 3️⃣ Start Frontend
 
-If using Vite:
 
 ```bash
 npm run dev
-```
-
-If using Create React App:
-
-```bash
-npm start
 ```
 
 Frontend will run on:
@@ -143,9 +136,6 @@ Frontend will run on:
 ```
 http://localhost:5173
 ```
-
-OR
-[http://localhost:3000](http://localhost:3000)
 
 ````
 
@@ -173,7 +163,7 @@ cd backend
 npm run dev
 ````
 
-### Terminal 2 – Frontend
+### Terminal 1 – Backend
 
 ```bash
 cd frontend
@@ -220,9 +210,6 @@ http://localhost:5173
 
 ---
 
----
-
-Project ready for development and UI improvements.
 
 ---
 
