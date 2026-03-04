@@ -163,7 +163,7 @@ cd backend
 npm run dev
 ````
 
-### Terminal 1 – Backend
+### Terminal 2 - Frontend
 
 ```bash
 cd frontend
@@ -185,7 +185,7 @@ http://localhost:5173
 3. Admin Dashboard
 4. Add Company (Step 1)
 5. Add Shareholders (Step 2)
-6. View Companies
+6. View Companies (created by logged in admin only)
 7. Logout
 
 ---
@@ -409,6 +409,17 @@ All errors follow this format:
 API documentation complete.
 
 ---
+
+Future Improvements
+
+Edit/Delete companies
+
+Pagination
+
+Role-based access
+
+UI improvements
+
 
 # 👨‍💻 Author
 
