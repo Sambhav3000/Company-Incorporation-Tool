@@ -1,5 +1,3 @@
-# Company-Incorporation-Tool
-
 # Company Incorporation Tool
 
 A full-stack web application that allows an admin to:
@@ -222,10 +220,6 @@ http://localhost:5173
 
 ---
 
-# 👨‍💻 Author
-
-Sambhav Pandey
-
 ---
 
 Project ready for development and UI improvements.
@@ -426,3 +420,9 @@ All errors follow this format:
 ---
 
 API documentation complete.
+
+---
+
+# 👨‍💻 Author
+
+Sambhav Pandey
