@@ -15,12 +15,14 @@ datasource db {
 }
 
 
-model Company{
+model Company {
   id Int @id @default(autoincrement())
   name String
   numberOfShareholders Int @default(0)
   totalCapital Float @default(0)
   createdAt DateTime @default(now())
+  adminId Int
+  admin Admin @relation(fields: [adminId], references: [id])
   shareholders Shareholder[] @relation("CompanyShareholders")
 }
 
@@ -30,5 +32,13 @@ model Shareholder{
   lastName String
   nationality String
   companies Company[] @relation("CompanyShareholders")
-  
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  companies Company[]
 }

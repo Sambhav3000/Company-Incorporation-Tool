@@ -7,9 +7,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/company/step1" element={<MultiStepForm />} />           {/* New company */}
-        <Route path="/company/step2/:companyId" element={<MultiStepForm />} /> {/* Add shareholders */}
-        <Route path="/" element={<AdminPage />} />  {/* Optional: default to admin dashboard */}
+        <Route path="/company/step1" element={<MultiStepForm />} />           
+        <Route path="/company/step2/:companyId" element={<MultiStepForm />} /> 
+        <Route path="/" element={<AdminPage />} />  
       </Routes>
     </BrowserRouter>
   );

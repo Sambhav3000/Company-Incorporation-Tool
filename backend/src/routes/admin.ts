@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {prisma} from '../db'
-import { asyncHandler } from "../middlewares/asyncHandler";
+import { asyncHandler } from "../middleware/asyncHandler";
 import { success, error } from "../utils/ApiResponse";
 
 const router=Router()

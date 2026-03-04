@@ -1,84 +1,103 @@
 import { Router } from "express";
-import {prisma} from "../db"
-import { asyncHandler } from "../middlewares/asyncHandler";
-import { success,error } from "../utils/ApiResponse";
-import { create } from "axios";
+import { prisma } from "../db";
+import { asyncHandler } from "../middleware/asyncHandler";
+import { success, error } from "../utils/ApiResponse";
+import { authMiddleware } from "../middleware/auth.middleware";
 
-const router=Router();
+const router = Router();
 
-//create company draft
-router.post("/step1",asyncHandler(async(req,res)=>{
-    const {id,name,totalCapital,numberOfShareholders}=req.body;
+// 🔐 Protect all routes — admin must be logged in
+router.use(authMiddleware);
 
-    const company=id ? await prisma.company.update({
-        where:{id},
-        data:{name,totalCapital,numberOfShareholders},
-    }) :
-    await prisma.company.create({
-        data:{name,totalCapital,numberOfShareholders}
+// Create or update company draft
+router.post(
+  "/step1",
+  asyncHandler(async (req, res) => {
+    const { id, name, totalCapital, numberOfShareholders } = req.body;
+    const adminId = (req as any).admin.id; // from authMiddleware
+
+    if (!name || totalCapital === undefined || numberOfShareholders === undefined)
+      return error(res, "Missing required company fields", 400);
+
+    const company = id
+      ? await prisma.company.update({
+          where: { id },
+          data: { name, totalCapital, numberOfShareholders },
+        })
+      : await prisma.company.create({
+          data: {
+            name,
+            totalCapital,
+            numberOfShareholders,
+            adminId, // link company to logged-in admin
+          },
+        });
+
+    if (!company) return error(res, "Error occurred while creating company", 500);
+    return success(res, company, "Company saved successfully");
+  })
+);
+
+// Add shareholder info to a company
+router.post(
+  "/step2/:companyId",
+  asyncHandler(async (req, res) => {
+    const companyIdParam = req.params.companyId;
+
+    if (!companyIdParam || Array.isArray(companyIdParam))
+      return error(res, "Invalid Company Id", 400);
+
+    const companyId = parseInt(companyIdParam, 10);
+    if (isNaN(companyId)) return error(res, "Company Id must be a number", 400);
+
+    const { shareholders } = req.body;
+    if (!Array.isArray(shareholders) || shareholders.length === 0)
+      return error(res, "Shareholders array is required", 400);
+
+    // Ensure the company belongs to the logged-in admin
+    const companyExists = await prisma.company.findFirst({
+      where: { id: companyId, adminId: (req as any).admin.id },
+    });
+    if (!companyExists)
+      return error(res, "Company does not exist or you do not have permission", 403);
+
+    const updatedCompany = await prisma.company.update({
+      where: { id: companyId },
+      data: { shareholders: { create: shareholders } },
+      include: { shareholders: true },
     });
 
-    if (!company)
-        return error(res,"Error occured while creating company",501);
-    return success(res,company,"Company saved successfully");
+    return success(res, updatedCompany, "Shareholders added successfully");
+  })
+);
 
-}))
+// Get company by ID (only if admin owns it)
+router.get(
+  "/:companyId",
+  asyncHandler(async (req, res) => {
+    const companyIdParam = req.params.companyId;
+    if (!companyIdParam || Array.isArray(companyIdParam))
+      return error(res, "Invalid Company Id", 400);
 
-//Add shareholder info
-router.post("/step2/:companyId",asyncHandler(async(req,res)=>{
-    const companyIdParam=req.params.companyId;
+    const companyId = parseInt(companyIdParam, 10);
+    if (isNaN(companyId)) return error(res, "Company Id must be a number", 400);
 
-    if(!companyIdParam || Array.isArray(companyIdParam))
-        return error(res,"Invalid Company Id", 400);
+    const company = await prisma.company.findFirst({
+      where: { id: companyId, adminId: (req as any).admin.id },
+      include: { shareholders: true },
+    });
 
-    const companyId=parseInt(companyIdParam,10);
+    if (!company) return error(res, "Company does not exist", 404);
+    return success(res, company);
+  })
+);
 
-    if(isNaN(companyId))
-        return error(res,"Company Id must be a number", 400);
-
-    const {shareholders} = req.body;
-
-    if(!Array.isArray(shareholders) || shareholders.length==0)
-            return error(res,"Shareholders array is required", 400);
-    
-    const updatedCompany = await prisma.company.update({
-        where:{id:companyId},
-        data:{shareholders:{
-                create: shareholders
-            }
-        },
-        include:{shareholders:true},
-    }
-    );
-
-    if(!updatedCompany)
-        return error(res,"Error occured while updating company details")
-    
-    return success(res,updatedCompany,"Shareholders added successfully");
-}))
-
-//get company from ID
-router.get("/:companyId",asyncHandler(async(req,res)=>{
-    const companyIdParams = req.params.companyId;
-
-    if(Array.isArray(companyIdParams) || !companyIdParams)
-        return error(res,"Invalid Company Id",400);
-
-    const companyId=parseInt(companyIdParams,10);
-    if(isNaN(companyId))
-        return error(res,"Company Id must be a number",400);
-
-    const company = await prisma.company.findUnique({where:{id:companyId}, include:{shareholders:true}})
-
-    if(!company)
-        return error(res,"Company does not exist", 400);
-
-    return success(res,company);
-}))
-
-router.get("/",
+// Get all companies of logged-in admin
+router.get(
+  "/",
   asyncHandler(async (req, res) => {
     const companies = await prisma.company.findMany({
+      where: { adminId: (req as any).admin.id },
       include: { shareholders: true },
       orderBy: { id: "desc" },
     });
