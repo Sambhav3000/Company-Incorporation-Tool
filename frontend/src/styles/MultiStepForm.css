@@ -1,66 +1,32 @@
-/* Full screen container */
-.form-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f3f4f6; /* Same as AdminPage */
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}
-
-/* Card for the form */
-.form-card {
-  background: white;
-  padding: 30px;
+/* MultiStepForm.css */
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 25px;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 600px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
 }
 
-/* Form heading */
-.form-card h2 {
-  margin-top: 0;
-  color: #1e293b; /* Matches admin card title */
+.step-indicator {
+  font-weight: bold;
+  color: #555;
   margin-bottom: 20px;
   text-align: center;
 }
 
-/* Inputs */
-.form-card input {
-  width: 100%;
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.error {
+  color: #d8000c;
+  background-color: #ffd2d2;
+  border-radius: 6px;
   padding: 10px;
   margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-}
-
-/* Buttons */
-.form-card button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-/* Next/Previous buttons */
-.next-btn {
-  background-color: #4f46e5; /* Matches AdminPage view button */
-  color: white;
-  margin-right: 10px;
-}
-
-.next-btn:hover {
-  background-color: #4338ca;
-}
-
-.prev-btn {
-  background-color: #9ca3af; /* Gray button for previous */
-  color: white;
-}
-
-.prev-btn:hover {
-  background-color: #6b7280;
+  text-align: center;
 }
