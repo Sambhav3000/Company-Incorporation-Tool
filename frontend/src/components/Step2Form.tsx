@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/Step2Form.css";
 
 type ShareholderData = {
@@ -19,8 +18,8 @@ interface Step2FormProps {
   onSubmit: () => void;
   loading: boolean;
   error: string;
-  prevStep?: () => void; // <-- optional now
-  companySummary?: CompanyData; // optional read-only summary
+  prevStep?: () => void; 
+  companySummary?: CompanyData; 
 }
 
 const Step2Form = ({

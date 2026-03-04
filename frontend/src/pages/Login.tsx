@@ -14,7 +14,7 @@ const Login = () => {
       const data = await res.data;
       if (data.success){
           setToken(data.data.token)
-          navigate("/admin");               // redirect to AdminPage
+          navigate("/admin");
       }
     } catch (err: any) {
       alert(err.response?.data?.message || "Login failed");

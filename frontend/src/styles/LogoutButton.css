@@ -1,6 +1,5 @@
-/* LogoutButton.css */
 button {
-  background-color: #dc3545; /* red */
+  background-color: #dc3545; 
   color: white;
   border: none;
   padding: 10px 22px;
@@ -11,5 +10,5 @@ button {
 }
 
 button:hover {
-  background-color: #c82333; /* darker red on hover */
+  background-color: #c82333; 
 }

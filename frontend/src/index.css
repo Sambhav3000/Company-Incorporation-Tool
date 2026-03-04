@@ -9,7 +9,6 @@ html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* This is the important fix */
 #root {
   min-height: 100vh;
   display: flex;

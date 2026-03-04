@@ -6,15 +6,14 @@ import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// 🔐 Protect all routes — admin must be logged in
 router.use(authMiddleware);
 
-// Create or update company draft
+
 router.post(
   "/step1",
   asyncHandler(async (req, res) => {
     const { id, name, totalCapital, numberOfShareholders } = req.body;
-    const adminId = (req as any).admin.id; // from authMiddleware
+    const adminId = (req as any).admin.id; 
 
     if (!name || totalCapital === undefined || numberOfShareholders === undefined)
       return error(res, "Missing required company fields", 400);
@@ -29,7 +28,7 @@ router.post(
             name,
             totalCapital,
             numberOfShareholders,
-            adminId, // link company to logged-in admin
+            adminId, 
           },
         });
 
@@ -38,7 +37,7 @@ router.post(
   })
 );
 
-// Add shareholder info to a company
+
 router.post(
   "/step2/:companyId",
   asyncHandler(async (req, res) => {
@@ -54,7 +53,7 @@ router.post(
     if (!Array.isArray(shareholders) || shareholders.length === 0)
       return error(res, "Shareholders array is required", 400);
 
-    // Ensure the company belongs to the logged-in admin
+    
     const companyExists = await prisma.company.findFirst({
       where: { id: companyId, adminId: (req as any).admin.id },
     });
@@ -71,7 +70,7 @@ router.post(
   })
 );
 
-// Get company by ID (only if admin owns it)
+
 router.get(
   "/:companyId",
   asyncHandler(async (req, res) => {
@@ -92,7 +91,7 @@ router.get(
   })
 );
 
-// Get all companies of logged-in admin
+
 router.get(
   "/",
   asyncHandler(async (req, res) => {

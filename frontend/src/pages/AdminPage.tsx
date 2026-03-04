@@ -5,7 +5,7 @@ import { getToken } from "../utils/auth";
 import LogoutButton from "../components/LogoutButton"; // Logout component
 import "../styles/AdminPage.css";
 
-// Interfaces
+
 interface Shareholder {
   id: number;
   firstName: string;
@@ -27,11 +27,10 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch companies from backend
   const fetchCompanies = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/api/company"); // uses JWT automatically
+      const res = await api.get("/api/company"); 
       if (res.data.success) setCompanies(res.data.data);
     } catch (err) {
       console.error("Failed to fetch companies", err);
@@ -40,12 +39,10 @@ const AdminPage = () => {
     }
   };
 
-  // Navigate to MultiStepForm Step1
   const goToAddCompany = () => {
     navigate("/company/step1");
   };
 
-  // Navigate to MultiStepForm Step2
   const goToAddShareholders = (companyId: number) => {
     navigate(`/company/step2/${companyId}`);
   };
@@ -60,13 +57,11 @@ const AdminPage = () => {
 
   return (
     <div className="admin-container">
-      {/* Header with title and logout button */}
       <div className="admin-header">
         <h1 className="admin-title">Admin Dashboard</h1>
         <LogoutButton />
       </div>
 
-      {/* Actions */}
       <div className="admin-actions">
         <button className="add-btn" onClick={goToAddCompany}>
           Add New Company
@@ -76,7 +71,6 @@ const AdminPage = () => {
         </button>
       </div>
 
-      {/* Companies list */}
       <div className="companies-list">
         {companies.map((company) => (
           <div key={company.id} className="company-card">

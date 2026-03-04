@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import api from "../services/api";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -11,7 +11,7 @@ const Signup = () => {
     try {
       await api.post("/api/auth/signup", { email, password });
       alert("Signup successful! Please login.");
-      navigate("/login");   // redirect to login after signup
+      navigate("/login");   
     } catch (err: any) {
       alert(err.response?.data?.message || "Signup failed");
     }

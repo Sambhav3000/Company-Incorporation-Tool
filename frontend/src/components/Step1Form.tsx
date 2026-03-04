@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/Step1Form.css";
 
 type CompanyData = {

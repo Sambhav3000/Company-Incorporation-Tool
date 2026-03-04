@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Step1Form from "../components/Step1Form";
 import Step2Form from "../components/Step2Form";
-import api from "../services/api"; // use centralized axios instance
+import api from "../services/api"; 
 import "../styles/MultiStepForm.css";
 
 type CompanyData = {
@@ -71,14 +71,12 @@ export default function MultiStepForm() {
     }
   }, [isStep2, companyId]);
 
-  // Auto-save shareholder draft
   useEffect(() => {
     if (step === 2) {
       localStorage.setItem("shareholderDraft", JSON.stringify(shareholders));
     }
   }, [shareholders, step]);
 
-  // Adjust shareholders array dynamically
   useEffect(() => {
     if (step !== 2) return;
 

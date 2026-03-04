@@ -6,10 +6,9 @@ import { getToken } from "./utils/auth";
 import type { JSX } from "react";
 import Signup from "./pages/Signup";
 
-// ProtectedRoute component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const token = getToken();      // token is string | null
-  if (!token) return <Navigate to="/" replace />; // works now
+  const token = getToken();      
+  if (!token) return <Navigate to="/" replace />; 
   return children;
 };
 
@@ -17,11 +16,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public route */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected routes */}
         <Route
           path="/admin"
           element={
