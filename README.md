@@ -410,7 +410,7 @@ API documentation complete.
 
 ---
 
-Future Improvements
+### 🎯 Future Improvements
 
 Edit/Delete companies
 
