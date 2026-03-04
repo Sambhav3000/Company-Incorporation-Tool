@@ -1,79 +1,66 @@
-.container {
-  width: 90%;
-  max-width: 550px;
+/* Full screen container */
+.form-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f4f6; /* Same as AdminPage */
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/* Card for the form */
+.form-card {
   background: white;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-}
-
-.step-indicator {
-  text-align: center;
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 10px;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  font-weight: 600;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 18px;
-}
-
-label {
-  font-size: 14px;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  font-size: 15px;
-  transition: 0.2s;
-}
-
-input:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: none;
-  background: #4f46e5;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: #4338ca;
-}
-
-.shareholder-card {
-  padding: 18px;
-  margin-bottom: 20px;
   border-radius: 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px;
-  }
+/* Form heading */
+.form-card h2 {
+  margin-top: 0;
+  color: #1e293b; /* Matches admin card title */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Inputs */
+.form-card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+/* Buttons */
+.form-card button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Next/Previous buttons */
+.next-btn {
+  background-color: #4f46e5; /* Matches AdminPage view button */
+  color: white;
+  margin-right: 10px;
+}
+
+.next-btn:hover {
+  background-color: #4338ca;
+}
+
+.prev-btn {
+  background-color: #9ca3af; /* Gray button for previous */
+  color: white;
+}
+
+.prev-btn:hover {
+  background-color: #6b7280;
 }
