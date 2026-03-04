@@ -7,18 +7,42 @@ type ShareholderData = {
   nationality: string;
 };
 
+type CompanyData = {
+  name: string;
+  totalCapital: number | "";
+  numberOfShareholders: number | "";
+};
+
 interface Step2FormProps {
   shareholders: ShareholderData[];
   setShareholders: (s: ShareholderData[]) => void;
-  prevStep: () => void;
   onSubmit: () => void;
   loading: boolean;
   error: string;
+  prevStep?: () => void; // <-- optional now
+  companySummary?: CompanyData; // optional read-only summary
 }
 
-const Step2Form = ({ shareholders, setShareholders, prevStep, onSubmit, loading, error }: Step2FormProps) => {
+const Step2Form = ({
+  shareholders,
+  setShareholders,
+  prevStep,
+  onSubmit,
+  loading,
+  error,
+  companySummary,
+}: Step2FormProps) => {
   return (
     <div className="step2-container">
+      {companySummary && (
+        <div className="company-summary">
+          <h3>Company Summary</h3>
+          <p><strong>Name:</strong> {companySummary.name}</p>
+          <p><strong>Total Capital:</strong> {companySummary.totalCapital}</p>
+          <p><strong>Number of Shareholders:</strong> {companySummary.numberOfShareholders}</p>
+        </div>
+      )}
+
       {error && <div className="error">{error}</div>}
 
       {shareholders.map((sh, idx) => (
@@ -67,9 +91,11 @@ const Step2Form = ({ shareholders, setShareholders, prevStep, onSubmit, loading,
       ))}
 
       <div className="step2-buttons">
-        <button className="prev-btn" onClick={prevStep}>
-          Previous
-        </button>
+        {prevStep && (
+          <button className="prev-btn" onClick={prevStep}>
+            Previous
+          </button>
+        )}
         <button className="submit-btn" onClick={onSubmit} disabled={loading}>
           {loading ? "Saving..." : "Submit Company"}
         </button>
