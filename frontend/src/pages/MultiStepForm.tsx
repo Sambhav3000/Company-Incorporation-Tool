@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Step1Form from "../components/Step1Form";
 import Step2Form from "../components/Step2Form";
+import api from "../services/api"; // use centralized axios instance
 import "../styles/MultiStepForm.css";
 
 type CompanyData = {
@@ -32,24 +33,22 @@ export default function MultiStepForm() {
   const [shareholders, setShareholders] = useState<ShareholderData[]>([]);
   const [error, setError] = useState("");
 
-  /* ===============================
-     LOAD COMPANY IF STEP2
-  =============================== */
+  // Load company if step2
   useEffect(() => {
     if (isStep2 && companyId) {
       setStep(2);
-      fetch(`http://localhost:5000/api/company/${companyId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && data.data) {
-            const comp = data.data;
+      setLoading(true);
+      api
+        .get(`/api/company/${companyId}`)
+        .then((res) => {
+          if (res.data.success && res.data.data) {
+            const comp = res.data.data;
             setCompany({
               id: comp.id,
               name: comp.name,
               totalCapital: comp.totalCapital,
               numberOfShareholders: comp.numberOfShareholders,
             });
-
             setShareholders(
               comp.shareholders.length > 0
                 ? comp.shareholders.map((s: any) => ({
@@ -65,24 +64,21 @@ export default function MultiStepForm() {
             );
           }
         })
-        .catch(() => setError("Failed to load company data."));
+        .catch(() => setError("Failed to load company data."))
+        .finally(() => setLoading(false));
     } else {
       setStep(1);
     }
   }, [isStep2, companyId]);
 
-  /* ===============================
-     AUTO SAVE SHAREHOLDER DRAFT
-  =============================== */
+  // Auto-save shareholder draft
   useEffect(() => {
     if (step === 2) {
       localStorage.setItem("shareholderDraft", JSON.stringify(shareholders));
     }
   }, [shareholders, step]);
 
-  /* ===============================
-     DYNAMIC SHAREHOLDER RESIZING
-  =============================== */
+  // Adjust shareholders array dynamically
   useEffect(() => {
     if (step !== 2) return;
 
@@ -109,9 +105,7 @@ export default function MultiStepForm() {
     });
   }, [step, company.numberOfShareholders]);
 
-  /* ===============================
-     STEP1 SUBMIT
-  =============================== */
+  // STEP1 Submit
   const handleStep1Submit = async () => {
     setError("");
     if (!company.name.trim()) {
@@ -134,23 +128,18 @@ export default function MultiStepForm() {
     try {
       let companyIdToUse = company.id;
 
-      // Only create new company if no ID
       if (!company.id) {
-        const res = await fetch("http://localhost:5000/api/company/step1", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: company.name,
-            totalCapital: company.totalCapital,
-            numberOfShareholders: company.numberOfShareholders,
-          }),
+        const res = await api.post("/api/company/step1", {
+          name: company.name,
+          totalCapital: company.totalCapital,
+          numberOfShareholders: company.numberOfShareholders,
         });
-        const data = await res.json();
-        if (data.success) {
-          companyIdToUse = data.data.id;
+
+        if (res.data.success) {
+          companyIdToUse = res.data.data.id;
           setCompany({ ...company, id: companyIdToUse });
         } else {
-          setError(data.message || "Error creating company");
+          setError(res.data.message || "Error creating company");
           return;
         }
       }
@@ -165,9 +154,7 @@ export default function MultiStepForm() {
     }
   };
 
-  /* ===============================
-     STEP2 SUBMIT
-  =============================== */
+  // STEP2 Submit
   const handleStep2Submit = async () => {
     setError("");
     for (let i = 0; i < shareholders.length; i++) {
@@ -184,22 +171,16 @@ export default function MultiStepForm() {
 
     setLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/company/step2/${company.id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ shareholders }),
-        }
-      );
-      const data = await res.json();
-      if (data.success) {
+      const res = await api.post(`/api/company/step2/${company.id}`, {
+        shareholders,
+      });
+      if (res.data.success) {
         alert("Company and shareholders submitted successfully!");
         localStorage.removeItem("companyId");
         localStorage.removeItem("shareholderDraft");
         navigate("/admin");
       } else {
-        setError(data.message || "Error saving shareholders");
+        setError(res.data.message || "Error saving shareholders");
       }
     } catch (err) {
       console.error(err);
@@ -228,7 +209,7 @@ export default function MultiStepForm() {
         <Step2Form
           shareholders={shareholders}
           setShareholders={setShareholders}
-          prevStep={() => setStep(1)} // Previous button works now
+          prevStep={() => setStep(1)}
           onSubmit={handleStep2Submit}
           loading={loading}
           error={error}

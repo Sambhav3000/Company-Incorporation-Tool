@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { getToken } from "../utils/auth";
+import LogoutButton from "../components/LogoutButton"; // Logout component
 import "../styles/AdminPage.css";
 
+// Interfaces
 interface Shareholder {
   id: number;
   firstName: string;
@@ -27,9 +31,8 @@ const AdminPage = () => {
   const fetchCompanies = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/companies");
-      const data = await res.json();
-      if (data.success) setCompanies(data.data);
+      const res = await api.get("/api/company"); // uses JWT automatically
+      if (res.data.success) setCompanies(res.data.data);
     } catch (err) {
       console.error("Failed to fetch companies", err);
     } finally {
@@ -37,24 +40,33 @@ const AdminPage = () => {
     }
   };
 
-  // Navigate to MultiStepForm Step1 for new company
+  // Navigate to MultiStepForm Step1
   const goToAddCompany = () => {
     navigate("/company/step1");
   };
 
-  // Navigate to MultiStepForm Step2 for adding shareholders
+  // Navigate to MultiStepForm Step2
   const goToAddShareholders = (companyId: number) => {
     navigate(`/company/step2/${companyId}`);
   };
 
   useEffect(() => {
-    fetchCompanies(); // automatically load companies on mount
+    if (!getToken()) {
+      navigate("/login");
+      return;
+    }
+    fetchCompanies();
   }, []);
 
   return (
     <div className="admin-container">
-      <h1 className="admin-title">Admin Dashboard</h1>
+      {/* Header with title and logout button */}
+      <div className="admin-header">
+        <h1 className="admin-title">Admin Dashboard</h1>
+        <LogoutButton />
+      </div>
 
+      {/* Actions */}
       <div className="admin-actions">
         <button className="add-btn" onClick={goToAddCompany}>
           Add New Company
@@ -64,6 +76,7 @@ const AdminPage = () => {
         </button>
       </div>
 
+      {/* Companies list */}
       <div className="companies-list">
         {companies.map((company) => (
           <div key={company.id} className="company-card">
@@ -72,7 +85,6 @@ const AdminPage = () => {
             <p>Shareholders: {company.numberOfShareholders}</p>
             <p>Created: {new Date(company.createdAt).toLocaleString()}</p>
 
-            {/* Show Shareholders if any */}
             {company.shareholders.length > 0 && (
               <>
                 <h3>Shareholders:</h3>
@@ -86,7 +98,6 @@ const AdminPage = () => {
               </>
             )}
 
-            {/* Show "Add Shareholder Info" button if missing */}
             {company.shareholders.length === 0 &&
               company.numberOfShareholders > 0 && (
                 <button
